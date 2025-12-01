@@ -1,0 +1,47 @@
+{% extends "eventos_app/base.html" %}
+
+{% block titulo %}Lista de Eventos Registrados{% endblock %}
+
+{% block contenido %}
+    <h1 class="mb-4">Eventos Registrados</h1>
+    <a href="{% url 'registro_evento' %}" class="btn btn-success mb-4">
+        + Registrar Nuevo Evento
+    </a>
+    <hr>
+
+    {% if eventos %}
+        <div class="list-group">
+        {% for evento in eventos %}
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0">{{ evento.nombre }}</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <strong>Fecha:</strong> {{ evento.fecha|date:"Y-m-d" }} | 
+                        <strong>Ubicación:</strong> {{ evento.ubicacion|default:"No especificada" }}
+                    </p>
+                    
+                    {% if evento.participantes.all %}
+                        <h4 class="h6 mt-3">Participantes ({{ evento.participantes.count }}):</h4>
+                        <ul class="list-group list-group-flush">
+                            {% for participante in evento.participantes.all %}
+                                <li class="list-group-item">
+                                    {{ participante.nombre }} - 
+                                    <span class="text-muted small">{{ participante.correo_electronico }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-warning">No hay participantes registrados para este evento.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            Aún no hay eventos registrados en el sistema.
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,11 @@
+﻿# Archivos de entorno virtual
+venv/
+*.pyc
+__pycache__/
+
+# Archivos de Django
+db.sqlite3
+/media/
+
+# Archivos de VS Code
+.vscode/

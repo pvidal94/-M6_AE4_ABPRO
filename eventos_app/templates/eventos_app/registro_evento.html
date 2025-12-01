@@ -1,0 +1,81 @@
+{% extends "eventos_app/base.html" %}
+{% load widget_tweaks %}
+
+{% block titulo %}Registro de Nuevo Evento{% endblock %}
+
+{% block contenido %}
+    <h1 class="mb-4 text-center">Registro de Nuevo Evento</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% include "eventos_app/formulario_evento.html" with form=evento_form %}
+
+        <hr>
+
+        <h2 class="mt-4">Participantes</h2>
+        <div id="participantes-container">
+            {{ participante_formset.management_form }}
+            {% for form in participante_formset %}
+                {% include "eventos_app/formulario_participante.html" with form=form %}
+            {% endfor %}
+        </div>
+
+        <button type="button" id="add-more" class="btn btn-sm btn-secondary mb-4">
+            <i class="bi bi-plus-circle"></i> ➕ Agregar Participante
+        </button>
+        
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">
+                Registrar Evento
+            </button>
+            <a href="{% url 'lista_eventos' %}" class="btn btn-outline-info">
+                Ver Lista de Eventos
+            </a>
+        </div>
+    </form>
+
+    <script>
+        // ... El script JS que maneja el formset dinámico debe ir aquí, 
+        // tal como te lo proporcioné en la respuesta anterior.
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const container = document.getElementById('participantes-container');
+            const addButton = document.getElementById('add-more');
+            const managementForm = document.querySelector('#participantes-container [name$="TOTAL_FORMS"]');
+            
+            if (!managementForm) return; 
+
+            let formCount = parseInt(managementForm.value);
+
+            let firstForm = container.querySelector('.participante-form-container');
+            let emptyFormEl;
+
+            if (firstForm) {
+                emptyFormEl = firstForm.cloneNode(true);
+                emptyFormEl.querySelectorAll('input').forEach(input => input.value = '');
+            } else {
+                 return; 
+            }
+
+            addButton.addEventListener('click', () => {
+                const newForm = emptyFormEl.cloneNode(true);
+                
+                const formCountString = '-' + formCount + '-';
+                
+                newForm.innerHTML = newForm.innerHTML.replace(new RegExp('-0-', 'g'), formCountString);
+                newForm.innerHTML = newForm.innerHTML.replace(new RegExp('__prefix__', 'g'), formCount);
+                
+                newForm.style.display = 'block';
+
+                container.appendChild(newForm);
+                
+                managementForm.value = formCount + 1;
+                formCount++;
+            });
+            // Opcional: Asegurarse que el formulario inicial tenga el botón de agregar visible
+            if (firstForm) {
+                firstForm.style.display = 'block';
+            }
+        });
+    </script>
+{% endblock %}
